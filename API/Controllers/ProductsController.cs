@@ -21,7 +21,7 @@ public class ProductsController(IProductRepository repository) : ControllerBase
     [HttpGet("{id:int}")]   // api/products/2
     public async Task<ActionResult<Product>> GetProduct(int id)
     {
-        var product = await context.Products.FindAsync(id);
+        var product = await repository.GetByIdAsync(id);
         if (product == null) 
             return NotFound();
         return product;
@@ -30,8 +30,8 @@ public class ProductsController(IProductRepository repository) : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Product>> CreateProduct([FromBody] Product product)
     {
-        context.Products.Add(product);
-        await context.SaveChangesAsync();
+        repository.Add(product);
+        await repository.SaveChangesAsync();
         return product;
     }
 
@@ -40,24 +40,24 @@ public class ProductsController(IProductRepository repository) : ControllerBase
     {
         if (id != product.Id || !ProductExists(id))
             return BadRequest("Cannot update product");
-        context.Entry(product).State = EntityState.Modified;
-        await context.SaveChangesAsync();
+        repository.Update(product);       
+        await repository.SaveChangesAsync();
         return NoContent();
     }
 
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteProduct(int id)
     {
-        var product = await context.Products.FindAsync(id);
+        var product = await repository.GetByIdAsync(id);
         if (product == null)
             return NotFound();
-        context.Products.Remove(product);
-        await context.SaveChangesAsync();
+        repository.Delete(product);
+        await repository.SaveChangesAsync();
         return NoContent();
     }
 
     private bool ProductExists(int id)
     {
-        return context.Products.Any(e => e.Id == id);
+        return repository.IsExists(id);
     }
 }
