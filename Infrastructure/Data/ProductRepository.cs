@@ -16,7 +16,7 @@ namespace Infrastructure.Data
             storeContext.Products.Remove(product);
         }
 
-        public async Task<IReadOnlyList<Product>> GetAllAsync(string? brand, string? type)
+        public async Task<IReadOnlyList<Product>> GetAllAsync(string? brand, string? type, string? sort)
         {
             //return await storeContext.Products.Where(x =>
             //    (brand == null || x.Brand == brand) &&
@@ -25,14 +25,32 @@ namespace Infrastructure.Data
             var query = storeContext.Products.AsQueryable();
             if (!string.IsNullOrWhiteSpace(brand))
             {
-                query = query.Where(b => b.Brand == brand);
+                query = query.Where(x => x.Brand == brand);
             }
             if (!string.IsNullOrWhiteSpace(type))
             {
-                query = query.Where(b => b.Type == type);
+                query = query.Where(x => x.Type == type);
+            }
+            switch (sort)
+            {
+                case "priceAsc":
+                    query = query.OrderBy(x => x.Price);
+                    break;
+                case "priceDesc":
+                    query = query.OrderByDescending(x => x.Price);
+                    break;
+                case "nameAsc":
+                    query = query.OrderBy(x => x.Name);
+                    break;
+                case "nameDesc":
+                    query = query.OrderByDescending(x => x.Name);
+                    break;
+                default:
+                    query = query.OrderBy(x => x.Name);
+                    break;
             }
 
-            return await query.ToListAsync();            
+            return await query.ToListAsync();
         }
 
         public async Task<IReadOnlyList<string>> GetBrandsAsync()

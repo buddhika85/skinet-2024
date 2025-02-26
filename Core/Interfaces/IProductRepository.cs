@@ -4,7 +4,7 @@ namespace Core.Interfaces
 {
     public interface IProductRepository
     {
-        Task<IReadOnlyList<Product>> GetAllAsync(string? brand, string? type);
+        Task<IReadOnlyList<Product>> GetAllAsync(string? brand, string? type, string? sort);
         Task<Product?> GetByIdAsync(int id);
         Task<IReadOnlyList<string>> GetBrandsAsync();
         Task<IReadOnlyList<string>> GetTypesAsync();
