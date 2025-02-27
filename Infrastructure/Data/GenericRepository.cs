@@ -17,17 +17,7 @@ namespace Infrastructure.Data
         {
             return await context.Set<T>().ToListAsync();
         }
-
-        public async Task<T?> GetEntityWithSpec(ISpecification<T> specification)
-        {
-            return await ApplySpecification(specification).FirstOrDefaultAsync();
-        }     
-
-        public async Task<IReadOnlyList<T>> ListAsync(ISpecification<T> specification)
-        {
-            return await ApplySpecification(specification).ToListAsync();
-        }
-
+        
         public void Add(T entity)
         {
             context.Set<T>().Add(entity);
@@ -55,10 +45,37 @@ namespace Infrastructure.Data
         }
 
 
+        // Specification using methods
+        public async Task<T?> GetEntityWithSpec(ISpecification<T> specification)
+        {
+            return await ApplySpecification(specification).FirstOrDefaultAsync();
+        }
+
+        public async Task<IReadOnlyList<T>> ListAsync(ISpecification<T> specification)
+        {
+            return await ApplySpecification(specification).ToListAsync();
+        }
+        public async Task<TResult?> GetEntityWithSpec<TResult>(ISpecification<T, TResult> specification)
+        {
+            return await ApplySpecification(specification).FirstOrDefaultAsync();
+        }
+
+        public async Task<IReadOnlyList<TResult>> ListAsync<TResult>(ISpecification<T, TResult> specification)
+        {
+            return await ApplySpecification(specification).ToListAsync();
+        }
+
+       
+
         // helpers
         private IQueryable<T> ApplySpecification(ISpecification<T> specification)
         {
             return SpecificationEvaluator<T>.GetQuery(context.Set<T>().AsQueryable(), specification);
+        }
+
+        private IQueryable<TResult> ApplySpecification<TResult>(ISpecification<T, TResult> specification)
+        {
+            return SpecificationEvaluator<T>.GetQuery<T, TResult>(context.Set<T>().AsQueryable(), specification);
         }
     }
 }
