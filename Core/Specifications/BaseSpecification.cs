@@ -14,6 +14,12 @@ namespace Core.Specifications
 
         public bool IsDistinct { get; private set; }
 
+        public int Take { get; private set; }
+
+        public int Skip { get; private set; }
+
+        public bool IsPagingEnabled { get; private set; }
+
         protected BaseSpecification() : this(null)
         {
         }
@@ -36,6 +42,22 @@ namespace Core.Specifications
         protected void ApplyDistinct()
         {
             IsDistinct = true;
+        }
+
+        protected void ApplyPaging(int skip, int take)
+        {
+            Take = take;
+            Skip = skip;
+            IsPagingEnabled = true;
+        }
+
+        public IQueryable<T> ApplyCriteria(IQueryable<T> query)
+        {
+            if (Criteria != null)
+            {
+                query = query.Where(Criteria);
+            }
+            return query;
         }
     }
 

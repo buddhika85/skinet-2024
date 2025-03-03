@@ -77,5 +77,13 @@ namespace Infrastructure.Data
         {
             return SpecificationEvaluator<T>.GetQuery<T, TResult>(context.Set<T>().AsQueryable(), specification);
         }
+
+        // counting before making pagination related filtering
+        public async Task<int> CountAsync(ISpecification<T> spec)
+        {
+            var query = context.Set<T>().AsQueryable();
+            query = spec.ApplyCriteria(query);
+            return await query.CountAsync();
+        }
     }
 }
