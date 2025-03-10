@@ -14,7 +14,6 @@ export class ShopService
 
   getProducts()
   {
-    return this.http.get<Pagination<Product>>(this.baseUrl + 'products?pageSize=20
-      ');
+    return this.http.get<Pagination<Product>>(this.baseUrl + 'products?pageSize=20');
   }
 }
