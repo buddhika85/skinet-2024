@@ -25,7 +25,10 @@ export class ShopService
       return;
 
     this.http.get<string[]>(this.baseUrl + 'products/brands').subscribe({
-      next: response => this.brands = response,
+      next: response => {
+        this.brands = response;
+        //console.log(this.brands + ' loaded');
+      },
       error: error => console.error(error)
     });
   }
@@ -36,7 +39,11 @@ export class ShopService
       return;
     
     this.http.get<string[]>(this.baseUrl + 'products/types').subscribe({
-      next: response => this.types = response,
+      
+      next: response => {
+        this.types = response;
+        //console.log(this.types + ' loaded');
+      },
       error: error => console.error(error)
     });
 

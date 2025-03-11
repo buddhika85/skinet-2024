@@ -34,6 +34,7 @@ export class ShopComponent implements OnInit
   {
     this.shopService.getTypes();
     this.shopService.getBrands();
+    
     this.shopService.getProducts().subscribe({
       next: response => this.products = response.data,
       error: error => console.error(error),
@@ -46,6 +47,6 @@ export class ShopComponent implements OnInit
     const dialogRef = this.dialogService.open(FiltersDialogComponent, {
       minWidth: '500px',
     });
-    dialogRef.ope
   }
+  
 }
