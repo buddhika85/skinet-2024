@@ -6,6 +6,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatButton } from '@angular/material/button';
 import { FiltersDialogComponent } from '../filters-dialog/filters-dialog.component';
 import { MatIcon } from '@angular/material/icon';
+import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
+import { MatListOption, MatSelectionList, MatSelectionListChange } from '@angular/material/list';
+import { ShopParams } from '../../shared/models/shopParams';
 
 @Component({
   selector: 'app-shop',
@@ -13,7 +16,11 @@ import { MatIcon } from '@angular/material/icon';
   imports: [   
     ProductItemComponent,
     MatButton,
-    MatIcon
+    MatIcon,
+    MatMenu,
+    MatSelectionList,
+    MatListOption,
+    MatMenuTrigger
 ],
   templateUrl: './shop.component.html',
   styleUrl: './shop.component.scss'
@@ -22,10 +29,13 @@ export class ShopComponent implements OnInit
 {
   
   products: Product[] = [];
+  sortOptions = [
+    { name: 'Alphabetical', value: 'name' },
+    { name: 'Price: Low-High', value: 'priceAsc' },
+    { name: 'Price: High-Low', value: 'priceDesc' }
+  ];
 
-  // user selected filters
-  selectedBrands: string[] = [];
-  selectedTypes: string[] = [];
+  shopParams = new ShopParams();
 
   private shopService = inject(ShopService);
   private  dialogService = inject(MatDialog);
@@ -40,7 +50,11 @@ export class ShopComponent implements OnInit
     this.shopService.getTypes();
     this.shopService.getBrands();
     
-    this.shopService.getProducts().subscribe({
+    this.getProducts();
+  }
+
+  getProducts() {    
+    this.shopService.getProducts(this.shopParams).subscribe({
       next: response => this.products = response.data,
       error: error => console.error(error),
       //complete: () => console.log('Complete')
@@ -52,8 +66,8 @@ export class ShopComponent implements OnInit
     const dialogRef = this.dialogService.open(FiltersDialogComponent, {
       minWidth: '500px',
       data: {                                                 // data to pass to the dialog
-        selectedBrands: this.selectedBrands,
-        selectedTypes: this.selectedTypes
+        selectedBrands: this.shopParams.brands,
+        selectedTypes: this.shopParams.types
       }
     });
 
@@ -62,13 +76,25 @@ export class ShopComponent implements OnInit
       if(result)
       {
         console.log(result);
-        this.selectedBrands = result.selectedBrands;
-        this.selectedTypes = result.selectedTypes;
+        this.shopParams.brands = result.selectedBrands;
+        this.shopParams.types = result.selectedTypes;
 
         // apply filters
+        this.getProducts();
       }
     });
 
   }
 
+  onSortChange(event: MatSelectionListChange) {
+    const selectedOption = event.options[0];
+    if(selectedOption)
+    {
+      this.shopParams.sort = selectedOption.value;
+      console.log(this.shopParams.sort);
+      this.getProducts();
+    } 
+  }
+
 }
+
