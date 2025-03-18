@@ -41,17 +41,35 @@ export class TestErrorComponent
 
   get401Error()
   {
-    
+    this.errorService.get401Error().subscribe({
+      next: response => console.log(response),    
+      error: error => {
+        console.error(error);
+        this.errorMessage = error.message;
+      }
+    });
 
   }
 
   get500Error()
   {
-    
+    this.errorService.get500Error().subscribe({
+      next: response => console.log(response),    
+      error: error => {
+        console.error(error);
+        this.errorMessage = error.message;
+      }
+    });
   }
 
   get400ValidationError()
   {
-    
+    this.errorService.get400ValidationError().subscribe({
+      next: response => console.log(response),    
+      error: error => {
+        console.error(error);
+        this.errorMessage = error.message;
+      }
+    });
   }
 }
