@@ -15,19 +15,30 @@ export class TestErrorComponent
 {
 
   private errorService: ErrorService = inject(ErrorService);
+  errorMessage: string = "";
  
   get404Error()
   {
     this.errorService.get404Error().subscribe({
       next: response => console.log(response),
-      error: error => console.error(error)
+      error: error => {
+        console.error(error);
+        this.errorMessage = error.message;
+      }
     });
   }
 
   get400Error()
   {
-    
+    this.errorService.get400Error().subscribe({
+      next: response => console.log(response),
+      error: error => {
+        console.error(error);
+        this.errorMessage = error.message;
+      }
+    });
   }
+
   get401Error()
   {
     
